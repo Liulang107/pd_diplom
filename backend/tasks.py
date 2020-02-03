@@ -1,11 +1,8 @@
 import yaml
-
 from django.conf.global_settings import EMAIL_HOST_USER
 from django.core.mail.message import EmailMultiAlternatives
-
 from orders.celery import app
-
-from .models import Category, Parameter, ProductParameter, Product, Shop
+from .models import Shop, Category, Product, Parameter, ProductParameter, ProductInfo
 
 
 @app.task()
@@ -34,32 +31,25 @@ def import_shop_data(data, user_id):
     shop, _ = Shop.objects.get_or_create(user_id=user_id,
                                          defaults={'name': file['shop']})
 
-    load_cat = [
-        Category(id=category['id'], name=category['name']) for category in file['categories']
-    ]
-    Category.objects.bulk_create(load_cat)
+    for category in file['categories']:
+        category_object, _ = Category.objects.get_or_create(id=category['id'], name=category['name'])
+        category_object.shops.add(shop.id)
+        category_object.save()
 
-    Product.objects.filter(shop_id=shop.id).delete()
+    ProductInfo.objects.filter(shop_id=shop.id).delete()
 
-    load_prod = []
-    product_id = {}
-    load_pp = []
     for item in file['goods']:
-        load_prod.append(Product(name=item['name'],
-                                 category_id=item['category'],
-                                 model=item['model'],
-                                 external_id=item['id'],
-                                 shop_id=shop.id,
-                                 quantity=item['quantity'],
-                                 price=item['price'],
-                                 price_rrc=item['price_rrc']))
-        product_id[item['id']] = {}
+        product, _ = Product.objects.get_or_create(name=item['name'], category_id=item['category'])
 
+        product_info = ProductInfo.objects.create(product_id=product.id,
+                                                  external_id=item['id'],
+                                                  model=item['model'],
+                                                  price=item['price'],
+                                                  price_rrc=item['price_rrc'],
+                                                  quantity=item['quantity'],
+                                                  shop_id=shop.id)
         for name, value in item['parameters'].items():
-            parameter, _ = Parameter.objects.get_or_create(name=name)
-            product_id[item['id']].update({parameter.id: value})
-            load_pp.append(ProductParameter(product_id=product_id[item['id']][parameter.id],
-                                            parameter_id=parameter.id,
-                                            value=value))
-    Product.objects.bulk_create(load_prod)
-    ProductParameter.objects.bulk_create(load_pp)
+            parameter_object, _ = Parameter.objects.get_or_create(name=name)
+            ProductParameter.objects.create(product_info_id=product_info.id,
+                                            parameter_id=parameter_object.id,
+                                            value=value)
