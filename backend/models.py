@@ -1,6 +1,6 @@
-from auth.models import User, Contact
-from django.core.files import storage
 from django.db import models
+from django.core.files import storage
+from accounts.models import User, Contact
 
 
 STATE_CHOICES = (
@@ -75,7 +75,7 @@ class ProductInfo(models.Model):
 
     class Meta:
         verbose_name = 'Информация о продукте'
-        verbose_name_plural = "Информационный список о продуктах"
+        verbose_name_plural = 'Информационный список о продуктах'
         constraints = [
             models.UniqueConstraint(fields=['product', 'shop', 'external_id'], name='unique_product_info'),
         ]
@@ -86,7 +86,7 @@ class Parameter(models.Model):
 
     class Meta:
         verbose_name = 'Имя параметра'
-        verbose_name_plural = "Список имен параметров"
+        verbose_name_plural = 'Список имен параметров'
         ordering = ('-name',)
 
     def __str__(self):
@@ -121,7 +121,7 @@ class Order(models.Model):
 
     class Meta:
         verbose_name = 'Заказ'
-        verbose_name_plural = "Список заказ"
+        verbose_name_plural = 'Список заказ'
         ordering = ('-dt',)
 
     def __str__(self):
@@ -144,7 +144,7 @@ class OrderItem(models.Model):
 
     class Meta:
         verbose_name = 'Заказанная позиция'
-        verbose_name_plural = "Список заказанных позиций"
+        verbose_name_plural = 'Список заказанных позиций'
         constraints = [
             models.UniqueConstraint(fields=['order_id', 'product_info'], name='unique_order_item'),
         ]

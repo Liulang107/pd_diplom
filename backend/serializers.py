@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from auth.models import Contact, User
 from .models import Shop, Category, Product, ProductInfo, OrderItem, Order, ProductParameter
+from accounts.models import User, Contact
 
 
 class ContactSerializer(serializers.ModelSerializer):

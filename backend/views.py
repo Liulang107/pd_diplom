@@ -1,4 +1,3 @@
-from distutils.util import strtobool
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.db import IntegrityError
@@ -9,13 +8,14 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status, viewsets
+from distutils.util import strtobool
 from ujson import loads as load_json
 from .tasks import import_shop_data
+from .signals import new_user_registered, new_order
 from .models import Shop, Category, ProductInfo, Order, OrderItem
-from auth.models import Contact, ConfirmEmailToken
+from accounts.models import Contact, ConfirmEmailToken
 from .serializers import UserSerializer, CategorySerializer, ShopSerializer, ProductInfoSerializer, \
     OrderItemSerializer, OrderSerializer, ContactSerializer
-from .signals import new_user_registered, new_order
 
 
 
@@ -29,7 +29,7 @@ class RegisterAccount(APIView):
     def post(self, request, *args, **kwargs):
 
         # проверяем обязательные аргументы
-        if {'first_name', 'last_name', 'email', 'password', 'company', 'position'}.issubset(request.data):
+        if {'email', 'password', 'company', 'position', 'type'}.issubset(request.data):
             errors = {}
 
             # проверяем пароль на сложность

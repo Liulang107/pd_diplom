@@ -1,7 +1,8 @@
 from django.dispatch import receiver, Signal
 from django_rest_passwordreset.signals import reset_password_token_created
-from auth.models import ConfirmEmailToken, User
+from accounts.models import User, ConfirmEmailToken
 from .tasks import send_email
+
 
 new_user_registered = Signal(
     providing_args=['user_id'],
@@ -18,8 +19,8 @@ def password_reset_token_created(sender, instance, reset_password_token, **kwarg
     отправляем письмо с токеном для сброса пароля
     """
     # send an e-mail to the user
-    title = f"Сброс пароля для {reset_password_token.user}"
-    message = f"Токен для сброса пароля {reset_password_token.key}"
+    title = f'Сброс пароля для {reset_password_token.user}'
+    message = f'Токен для сброса пароля {reset_password_token.key}'
     email = reset_password_token.user
     send_email(title, message, email)
 
@@ -31,8 +32,8 @@ def new_user_registered_signal(user_id, **kwargs):
     """
     # send an e-mail to the user
     token, _ = ConfirmEmailToken.objects.get_or_create(user_id=user_id)
-    title =  f"Подтверждение регистрации для {token.user.email}"
-    message = f"Токен для подтверждения регистрации {token.key}"
+    title = f'Подтверждение регистрации для {token.user.email}'
+    message = f'Токен для подтверждения регистрации {token.key}'
     email = token.user.email
     send_email(title, message, email)
 
@@ -44,7 +45,7 @@ def new_order_signal(user_id, **kwargs):
     """
     # send an e-mail to the user
     user = User.objects.get(id=user_id)
-    title = "Обновление статуса заказа"
-    message = "Заказ сформирован"
+    title = 'Обновление статуса заказа'
+    message = 'Заказ сформирован'
     email = user.email
     send_email.apply_async((title, message, email), countdown=5 * 60)

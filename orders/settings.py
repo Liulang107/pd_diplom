@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django_rest_passwordreset',
     'import_export',
     'backend',
-    'auth',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -128,7 +128,7 @@ STATIC_URL = '/static/'
 
 STORAGE = os.path.join(BASE_DIR, 'storage')
 
-AUTH_USER_MODEL = 'backend.User'
+AUTH_USER_MODEL = 'accounts.User'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 EMAIL_HOST = 'smtp.mail.ru'
