@@ -27,7 +27,6 @@ class RegisterAccount(APIView):
 
     # Регистрация методом POST
     def post(self, request, *args, **kwargs):
-
         # проверяем обязательные аргументы
         if {'email', 'password', 'company', 'position', 'type'}.issubset(request.data):
             errors = {}

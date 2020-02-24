@@ -1,13 +1,12 @@
 import yaml
-from django.conf.global_settings import EMAIL_HOST_USER
+from orders.settings import EMAIL_HOST_USER
 from django.core.mail.message import EmailMultiAlternatives
 from orders.celery import app
 from .models import Shop, Category, Product, Parameter, ProductParameter, ProductInfo
-
+#
 
 @app.task()
-def send_email(message: str, email: str, *args, **kwargs) -> str:
-    title = 'Title'
+def send_email(title, message: str, email: str, *args, **kwargs) -> str:
     email_list = list()
     email_list.append(email)
     try:
