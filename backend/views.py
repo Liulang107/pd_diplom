@@ -74,8 +74,8 @@ class ConfirmAccount(APIView):
             token = ConfirmEmailToken.objects.filter(user__email=request.data['email'],
                                                      key=request.data['token']).first()
             if token:
-                token.user.is_active = True
-                token.user.save()
+                token.is_active = True
+                token.save()
                 token.delete()
                 return JsonResponse({'Status': True})
             else:
@@ -220,10 +220,10 @@ class BasketView(APIView):
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=status.HTTP_403_FORBIDDEN)
 
-        items_sting = request.data.get('items')
-        if items_sting:
+        items_string = request.data.get('items')
+        if items_string:
             try:
-                items_dict = load_json(items_sting)
+                items_dict = load_json(items_string)
             except ValueError:
                 JsonResponse({'Status': False, 'Errors': 'Неверный формат запроса'}, status=status.HTTP_403_FORBIDDEN)
             else:
@@ -252,9 +252,9 @@ class BasketView(APIView):
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=status.HTTP_403_FORBIDDEN)
 
-        items_sting = request.data.get('items')
-        if items_sting:
-            items_list = items_sting.split(',')
+        items_string = request.data.get('items')
+        if items_string:
+            items_list = items_string.split(',')
             basket, _ = Order.objects.get_or_create(user_id=request.user.id, state='basket')
             query = Q()
             objects_deleted = False
@@ -273,10 +273,10 @@ class BasketView(APIView):
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=status.HTTP_403_FORBIDDEN)
 
-        items_sting = request.data.get('items')
-        if items_sting:
+        items_string = request.data.get('items')
+        if items_string:
             try:
-                items_dict = load_json(items_sting)
+                items_dict = load_json(items_string)
             except ValueError:
                 JsonResponse({'Status': False, 'Errors': 'Неверный формат запроса'}, status=status.HTTP_403_FORBIDDEN)
             else:
@@ -413,9 +413,9 @@ class ContactView(APIView):
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=status.HTTP_403_FORBIDDEN)
 
-        items_sting = request.data.get('items')
-        if items_sting:
-            items_list = items_sting.split(',')
+        items_string = request.data.get('items')
+        if items_string:
+            items_list = items_string.split(',')
             query = Q()
             objects_deleted = False
             for contact_id in items_list:

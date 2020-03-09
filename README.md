@@ -160,3 +160,6 @@
 
 Для получения подробностей по данному этапу
 [перейдите по ссылке](reference/step-7-adv.md).
+
+Схема API на сервисе POSTMAN:
+https://documenter.getpostman.com/view/10339554/SzRxXWnD
